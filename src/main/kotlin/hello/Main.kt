@@ -8,6 +8,18 @@ import org.http4k.lens.Header
 import org.http4k.server.Jetty
 import org.http4k.server.asServer
 
+data class Base(val RESPONSE: RESPONSE?)
+
+data class RESPONSE(val RESULT: List<RESULT>?)
+
+data class RESULT(val TrainAnnouncement: List<TrainAnnouncement>?)
+
+data class TrainAnnouncement(
+        val AdvertisedTimeAtLocation: String?,
+        val AdvertisedTrainIdent: String?,
+        val TrackAtLocation: String?
+)
+
 fun main() {
     ::response.asServer(Jetty(8000)).start()
 }
