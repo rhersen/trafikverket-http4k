@@ -23,20 +23,29 @@ data class TrainAnnouncement(
         val TrackAtLocation: String?
 )
 
+fun TrainAnnouncement.advertised(): String {
+    return AdvertisedTimeAtLocation?.substring(11, 16) ?: "-"
+}
+
 fun main() {
     ::response.asServer(Jetty(4001)).start()
 }
 
 private fun response(request: Request): Response = Response(OK)
-        .header("content-type", "text/html")
+        .header("content-type", ContentType.TEXT_HTML.value)
         .body("<table>" + list(request.query("location"))
                 ?.joinToString(separator = "", transform = ::announcement)
                 .orEmpty())
 
-fun announcement(a: TrainAnnouncement): String {
-    return "<html><head><meta charset='UTF-8'/><body><tr><td>" + (a.AdvertisedTrainIdent ?: "-") + "<td>" + (a.AdvertisedTimeAtLocation
-            ?: "-") + "<td>" + (a.TrackAtLocation ?: "-") + "<td>" + (a.ToLocation?.first()?.LocationName ?: "-")
-}
+fun announcement(a: TrainAnnouncement): String =
+        """<html>
+<head><meta charset='UTF-8'/>
+<body>
+  <tr>
+    <td>${a.AdvertisedTrainIdent ?: "-"}
+    <td>${a.advertised()}
+    <td>${a.TrackAtLocation ?: "-"}
+    <td>${a.ToLocation?.first()?.LocationName ?: "-"}"""
 
 private fun list(location: String?): List<TrainAnnouncement>? {
     return Body.auto<Base>()
