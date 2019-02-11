@@ -52,7 +52,7 @@ private fun list(location: String?): List<TrainAnnouncement>? {
 
 private fun xmlBody(location: String?): String {
     return """<REQUEST>
-                    |<LOGIN authenticationkey='${key}' />
+                    |<LOGIN authenticationkey='$key' />
                     |<QUERY objecttype="TrainAnnouncement" orderby="AdvertisedTimeAtLocation">
                     |<FILTER>
                     |<AND>
