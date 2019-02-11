@@ -24,7 +24,7 @@ data class TrainAnnouncement(
 )
 
 fun main() {
-    ::response.asServer(Jetty(8000)).start()
+    ::response.asServer(Jetty(4001)).start()
 }
 
 private fun response(request: Request): Response = Response(OK)
