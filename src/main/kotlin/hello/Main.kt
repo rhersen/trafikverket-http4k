@@ -14,9 +14,12 @@ data class RESPONSE(val RESULT: List<RESULT>?)
 
 data class RESULT(val TrainAnnouncement: List<TrainAnnouncement>?)
 
+data class ToLocation(val LocationName: String?, val Priority: Number?, val Order: Number?)
+
 data class TrainAnnouncement(
         val AdvertisedTimeAtLocation: String?,
         val AdvertisedTrainIdent: String?,
+        val ToLocation: List<ToLocation>?,
         val TrackAtLocation: String?
 )
 
@@ -31,7 +34,8 @@ private fun response(request: Request): Response = Response(OK)
                 .orEmpty())
 
 fun announcement(a: TrainAnnouncement): String {
-    return "<tr><td>" + (a.AdvertisedTrainIdent ?: "-") + "<td>" + (a.AdvertisedTimeAtLocation ?: "-")
+    return "<html><head><meta charset='UTF-8'/><body><tr><td>" + (a.AdvertisedTrainIdent ?: "-") + "<td>" + (a.AdvertisedTimeAtLocation
+            ?: "-") + "<td>" + (a.TrackAtLocation ?: "-") + "<td>" + (a.ToLocation?.first()?.LocationName ?: "-")
 }
 
 private fun list(location: String?): List<TrainAnnouncement>? {
@@ -55,7 +59,7 @@ private fun xmlBody(location: String?): String {
                     |<EQ name="ActivityType" value="Avgang" />
                     |<EQ name="LocationSignature" value="${location ?: 'N'}" />
                     |<AND>
-                    |<GT name="AdvertisedTimeAtLocation" value="${"$"}dateadd(-00:20:00)" />
+                    |<GT name="AdvertisedTimeAtLocation" value="${"$"}dateadd(-00:01:00)" />
                     |<LT name="AdvertisedTimeAtLocation" value="${"$"}dateadd(00:20:00)" />
                     |</AND>
                     |</AND>
@@ -63,6 +67,7 @@ private fun xmlBody(location: String?): String {
                     |<INCLUDE>AdvertisedTrainIdent</INCLUDE>
                     |<INCLUDE>AdvertisedTimeAtLocation</INCLUDE>
                     |<INCLUDE>TrackAtLocation</INCLUDE>
+                    |<INCLUDE>ToLocation</INCLUDE>
                     |</QUERY>
                     |</REQUEST>"""
 }
