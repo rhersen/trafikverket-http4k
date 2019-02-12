@@ -8,26 +8,23 @@ import org.http4k.lens.Header
 import org.http4k.server.Jetty
 import org.http4k.server.asServer
 
-
 fun main() {
     ::response.asServer(Jetty(4001)).start()
 }
 
 private fun response(request: Request): Response = Response(OK)
         .header("content-type", ContentType.TEXT_HTML.value)
-        .body("<table>" + list(request.query("location"))
+        .body("<html><head><meta charset='UTF-8'/><body><table>" + list(request.query("location"))
                 ?.joinToString(separator = "", transform = ::announcement)
                 .orEmpty())
 
 fun announcement(a: TrainAnnouncement): String =
-        """<html>
-<head><meta charset='UTF-8'/>
-<body>
+        """
   <tr>
-    <td>${a.AdvertisedTrainIdent ?: "-"}
-    <td>${a.advertised()}
-    <td>${a.TrackAtLocation ?: "-"}
-    <td>${a.ToLocation?.first()?.LocationName ?: "-"}"""
+    <td>${a.AdvertisedTrainIdent ?: "-"}</td>
+    <td>${a.advertised()}</td>
+    <td>${a.TrackAtLocation ?: "-"}</td>
+    <td>${a.ToLocation?.first()?.LocationName ?: "-"}</td>"""
 
 private fun list(location: String?): List<TrainAnnouncement>? {
     val target: Response = JavaHttpClient()(Request(Method.POST, "http://api.trafikinfo.trafikverket.se/v1.2/data.json")
