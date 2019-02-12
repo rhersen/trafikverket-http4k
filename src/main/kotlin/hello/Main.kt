@@ -30,15 +30,22 @@ fun announcement(a: TrainAnnouncement): String =
     <td>${a.ToLocation?.first()?.LocationName ?: "-"}"""
 
 private fun list(location: String?): List<TrainAnnouncement>? {
-    return Body.auto<Base>()
-            .toLens()
-            .extract(JavaHttpClient()(Request(Method.POST, "http://api.trafikinfo.trafikverket.se/v1.2/data.json")
-                    .with(Header.CONTENT_TYPE of ContentType.APPLICATION_XML)
-                    .body(xmlBody(location).trimMargin())))
-            .RESPONSE
-            ?.RESULT
-            ?.first()
-            ?.TrainAnnouncement
+    val target: Response = JavaHttpClient()(Request(Method.POST, "http://api.trafikinfo.trafikverket.se/v1.2/data.json")
+            .with(Header.CONTENT_TYPE of ContentType.APPLICATION_XML)
+            .body(xmlBody(location).trimMargin()))
+    try {
+        return Body.auto<Base>()
+                .toLens()
+                .extract(target)
+                .RESPONSE
+                ?.RESULT
+                ?.first()
+                ?.TrainAnnouncement
+    } catch (e: Exception) {
+        println(e)
+        println(target)
+        return emptyList()
+    }
 }
 
 private fun xmlBody(location: String?): String {
