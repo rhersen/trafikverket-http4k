@@ -5,11 +5,16 @@ import org.http4k.core.*
 import org.http4k.core.Status.Companion.OK
 import org.http4k.format.Gson.auto
 import org.http4k.lens.Header
+import org.http4k.routing.bind
+import org.http4k.routing.routes
 import org.http4k.server.Jetty
 import org.http4k.server.asServer
 
 fun main() {
-    ::response.asServer(Jetty(4001)).start()
+    routes(
+            "favicon.ico" bind Method.GET to { Response(OK) },
+            "" bind Method.GET to ::response
+    ).asServer(Jetty(4001)).start()
 }
 
 private fun response(request: Request): Response = Response(OK)
