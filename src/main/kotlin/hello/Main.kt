@@ -55,10 +55,6 @@ private fun xmlBody(location: String?): String {
                     |</AND>
                     |</AND>
                     |</FILTER>
-                    |<INCLUDE>AdvertisedTrainIdent</INCLUDE>
-                    |<INCLUDE>AdvertisedTimeAtLocation</INCLUDE>
-                    |<INCLUDE>TrackAtLocation</INCLUDE>
-                    |<INCLUDE>ToLocation</INCLUDE>
                     |</QUERY>
                     |</REQUEST>"""
 }
