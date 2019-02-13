@@ -22,16 +22,34 @@ fun main() {
 
 private fun response(request: Request): Response = Response(OK)
         .header("content-type", ContentType.TEXT_HTML.value)
-        .body("<html><head><link rel=\"stylesheet\" type=\"text/css\" href=\"css/style.css\"><meta charset='UTF-8'/><body><table>" + announcements(request.query("location"))
+        .body("<html><head><link rel='stylesheet' type='text/css' href='css/style.css'><meta charset='UTF-8'/><body><table>" + announcements(request.query("location"))
                 ?.joinToString(separator = "", transform = ::announcement)
                 .orEmpty())
 
 fun announcement(a: TrainAnnouncement): String = """
   <tr>
-    <td>${a.AdvertisedTrainIdent ?: "-"}</td>
-    <td>${a.advertised()}</td>
-    <td>${a.TrackAtLocation ?: "-"}</td>
-    <td>${a.ToLocation?.first()?.LocationName ?: "-"}</td>"""
+    <td>${a.AdvertisedTrainIdent}</td>
+    <td>${a.TechnicalTrainIdent}</td>
+    <td>${a.ActivityType}</td>
+    <td>${a.ToLocation?.first()?.LocationName}</td>
+    <td>${time(a.AdvertisedTimeAtLocation)}</td>
+    <td>${time(a.EstimatedTimeAtLocation)}</td>
+    <td>${time(a.TimeAtLocation)}</td>
+    <td>${a.TrackAtLocation}</td>
+    <td>${a.Canceled}</td>
+    <td>${a.InformationOwner}</td>
+    <td>${a.LocationSignature}</td>
+    <td>${a.WebLink}</td>
+    <td>${a.MobileWebLink}</td>
+    <td>${a.TypeOfTraffic}</td>
+  </tr>
+"""
+
+
+fun time(s: String?): String {
+    return s?.substring(11, 16) ?: "-"
+}
+
 
 private fun announcements(location: String?): List<TrainAnnouncement>? {
     val target: Response = JavaHttpClient()(Request(Method.POST, "http://api.trafikinfo.trafikverket.se/v1.2/data.json")
@@ -60,8 +78,8 @@ private fun xmlBody(location: String?): String = """<REQUEST>
                 |<EQ name="ActivityType" value="Avgang" />
                 |<EQ name="LocationSignature" value="${location ?: 'N'}" />
                 |<AND>
-                |<GT name="AdvertisedTimeAtLocation" value="${"$"}dateadd(-00:01:00)" />
-                |<LT name="AdvertisedTimeAtLocation" value="${"$"}dateadd(00:20:00)" />
+                |<GT name="AdvertisedTimeAtLocation" value="${"$"}dateadd(-00:30:00)" />
+                |<LT name="AdvertisedTimeAtLocation" value="${"$"}dateadd(00:30:00)" />
                 |</AND>
                 |</AND>
                 |</FILTER>

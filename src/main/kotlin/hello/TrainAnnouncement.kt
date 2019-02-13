@@ -9,6 +9,7 @@ data class TrainAnnouncement(
         val Booking: List<String>?,
         val Canceled: Boolean?,
         val Deviation: List<String>?,
+        val EstimatedTimeAtLocation: String?,
         val EstimatedTimeIsPreliminary: Boolean?,
         val FromLocation: List<FromLocation>?,
         val InformationOwner: String?,
@@ -21,6 +22,7 @@ data class TrainAnnouncement(
         val ProductInformation: List<String>?,
         val ScheduledDepartureDateTime: String?,
         val TechnicalTrainIdent: String?,
+        val TimeAtLocation: String?,
         val ToLocation: List<ToLocation>?,
         val TrackAtLocation: String?,
         val TrainComposition: List<String>?,
@@ -28,7 +30,3 @@ data class TrainAnnouncement(
         val ViaToLocation: List<ViaToLocation>?,
         val WebLink: String?
 )
-
-fun TrainAnnouncement.advertised(): String {
-    return AdvertisedTimeAtLocation?.substring(11, 16) ?: "-"
-}
