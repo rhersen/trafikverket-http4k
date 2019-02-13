@@ -5,13 +5,16 @@ import org.http4k.core.*
 import org.http4k.core.Status.Companion.OK
 import org.http4k.format.Gson.auto
 import org.http4k.lens.Header
+import org.http4k.routing.ResourceLoader.Companion.Classpath
 import org.http4k.routing.bind
 import org.http4k.routing.routes
+import org.http4k.routing.static
 import org.http4k.server.Jetty
 import org.http4k.server.asServer
 
 fun main() {
     routes(
+            "/css" bind static(Classpath("/css")),
             "favicon.ico" bind Method.GET to { Response(OK) },
             "" bind Method.GET to ::response
     ).asServer(Jetty(4001)).start()
@@ -19,7 +22,7 @@ fun main() {
 
 private fun response(request: Request): Response = Response(OK)
         .header("content-type", ContentType.TEXT_HTML.value)
-        .body("<html><head><meta charset='UTF-8'/><body><table>" + list(request.query("location"))
+        .body("<html><head><link rel=\"stylesheet\" type=\"text/css\" href=\"css/style.css\"><meta charset='UTF-8'/><body><table>" + announcements(request.query("location"))
                 ?.joinToString(separator = "", transform = ::announcement)
                 .orEmpty())
 
@@ -30,7 +33,7 @@ fun announcement(a: TrainAnnouncement): String = """
     <td>${a.TrackAtLocation ?: "-"}</td>
     <td>${a.ToLocation?.first()?.LocationName ?: "-"}</td>"""
 
-private fun list(location: String?): List<TrainAnnouncement>? {
+private fun announcements(location: String?): List<TrainAnnouncement>? {
     val target: Response = JavaHttpClient()(Request(Method.POST, "http://api.trafikinfo.trafikverket.se/v1.2/data.json")
             .with(Header.CONTENT_TYPE of ContentType.APPLICATION_XML)
             .body(xmlBody(location).trimMargin()))
