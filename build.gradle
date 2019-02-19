@@ -19,6 +19,7 @@ dependencies {
   compile group: "org.http4k", name: "http4k-core", version: "3.112.1"
   compile group: "org.http4k", name: "http4k-format-gson", version: "3.112.1"
   compile group: "org.http4k", name: "http4k-server-jetty", version: "3.112.1"
+  compile group: "org.http4k", name: "http4k-testing-hamkrest", version: "3.112.1"
 }
 
 repositories {

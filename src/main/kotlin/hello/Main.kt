@@ -32,11 +32,13 @@ fun announcement(a: TrainAnnouncement): String = """
     <td>${a.TechnicalTrainIdent}</td>
     <td>${a.ActivityType}</td>
     <td>${a.ToLocation?.first()?.LocationName}</td>
-    <td>${time(a.AdvertisedTimeAtLocation)}</td>
-    <td>${time(a.EstimatedTimeAtLocation)}</td>
-    <td>${time(a.TimeAtLocation)}</td>
+    <td>${a.Advertised}</td>
+    <td>${a.advertised()}</td>
+    <td>${a.estimated()}</td>
+    <td>${a.actual()}</td>
     <td>${a.TrackAtLocation}</td>
     <td>${a.Canceled}</td>
+    <td>${a.booking()}</td>
     <td>${a.InformationOwner}</td>
     <td>${a.LocationSignature}</td>
     <td>${a.WebLink}</td>
@@ -44,11 +46,6 @@ fun announcement(a: TrainAnnouncement): String = """
     <td>${a.TypeOfTraffic}</td>
   </tr>
 """
-
-
-fun time(s: String?): String {
-    return s?.substring(11, 16) ?: "-"
-}
 
 
 private fun announcements(location: String?): List<TrainAnnouncement>? {
