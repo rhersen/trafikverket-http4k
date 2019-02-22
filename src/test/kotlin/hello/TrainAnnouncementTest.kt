@@ -53,4 +53,23 @@ class TrainAnnouncementTest {
                     TrainAnnouncement(Booking = listOf("Vagn 7 obokad.", "Vagn 8 obokad.")).booking(),
                     equalTo("Vagn 7 obokad. Vagn 8 obokad.")
             )
+
+    @Test
+    fun `via, null`() =
+            assertThat(
+                    TrainAnnouncement().via(),
+                    equalTo("")
+            )
+
+    @Test
+    fun `via, not null`() =
+            assertThat(
+                    TrainAnnouncement(ViaToLocation = listOf(
+                            Location(LocationName = "Söö", Priority = 2, Order = 0),
+                            Location(LocationName = "Vhd", Priority = 3, Order = 1),
+                            Location(LocationName = "Nk", Priority = 1, Order = 2),
+                            Location(LocationName = "Kon", Priority = 4, Order = 3)
+                    )).via(),
+                    equalTo("Nk")
+            )
 }
