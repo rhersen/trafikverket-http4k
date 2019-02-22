@@ -31,19 +31,30 @@ fun announcement(a: TrainAnnouncement): String = """
     <td>${a.AdvertisedTrainIdent}</td>
     <td>${a.TechnicalTrainIdent}</td>
     <td>${a.ActivityType}</td>
-    <td>${a.ToLocation?.first()?.LocationName}</td>
-    <td>${a.Advertised}</td>
+    <td>${a.from()}</td>
+    <td>${a.to()}</td>
+    <td>${a.via()}</td>
     <td>${a.advertised()}</td>
     <td>${a.estimated()}</td>
     <td>${a.actual()}</td>
+    <td>${a.Advertised}</td>
+    <td>${a.EstimatedTimeIsPreliminary}</td>
+    <td>${a.PlannedEstimatedTimeAtLocationIsValid}</td>
     <td>${a.TrackAtLocation}</td>
     <td>${a.Canceled}</td>
+    <td>${a.deviation()}</td>
+    <td>${a.other()}</td>
+    <td>${a.composition()}</td>
     <td>${a.booking()}</td>
     <td>${a.InformationOwner}</td>
     <td>${a.LocationSignature}</td>
     <td>${a.WebLink}</td>
     <td>${a.MobileWebLink}</td>
     <td>${a.TypeOfTraffic}</td>
+    <td>${a.product()}</td>
+    <td>${a.NewEquipment}</td>
+    <td>${a.ScheduledDepartureDateTime}</td>
+    <td>${a.ModifiedTime}</td>
   </tr>
 """
 
