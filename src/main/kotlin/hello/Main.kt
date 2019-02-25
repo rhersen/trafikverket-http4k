@@ -24,10 +24,11 @@ const val head = "<html><head><link rel='stylesheet' type='text/css' href='css/s
 
 private fun response(request: Request): Response {
     val client = JavaHttpClient()
+    val stations = stations(client)
     return Response(OK)
             .header("content-type", ContentType.TEXT_HTML.value)
             .body(head + announcements(request.query("location"), client)
-                    ?.joinToString(separator = "") { announcement(it, stations(client)) }
+                    ?.joinToString(separator = "") { announcement(it, stations) }
                     .orEmpty())
 }
 
@@ -65,8 +66,13 @@ fun announcement(a: TrainAnnouncement, stations: Map<String?, List<TrainStation>
 
 
 private fun stations(client: HttpHandler): Map<String?, List<TrainStation>>? {
-    val target: Response = getResponse(client, stationsQuery().trimMargin())
+    var target: Response? = null
+
     return try {
+        val readText: String? = Classpath().load("cache/stations.json")?.readText()
+        target = if (readText == null) getResponse(client, stationsQuery().trimMargin())
+        else Response(OK).body(readText)
+
         Body.auto<StationsWrapper>()
                 .toLens()
                 .extract(target)
