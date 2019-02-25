@@ -20,13 +20,17 @@ fun main() {
     ).asServer(Jetty(4001)).start()
 }
 
-private fun response(request: Request): Response = Response(OK)
-        .header("content-type", ContentType.TEXT_HTML.value)
-        .body("<html><head><link rel='stylesheet' type='text/css' href='css/style.css'><meta charset='UTF-8'/><body><table>" + announcements(request.query("location"))
-                ?.joinToString(separator = "", transform = ::announcement)
-                .orEmpty())
+const val head = "<html><head><link rel='stylesheet' type='text/css' href='css/style.css'><meta charset='UTF-8'/><body><table>"
 
-fun announcement(a: TrainAnnouncement): String = """
+private fun response(request: Request): Response {
+    return Response(OK)
+            .header("content-type", ContentType.TEXT_HTML.value)
+            .body(head + announcements(request.query("location"))
+                    ?.joinToString(separator = "") { announcement(it, stations()) }
+                    .orEmpty())
+}
+
+fun announcement(a: TrainAnnouncement, stations: Map<String?, List<TrainStation>>?): String = """
   <tr>
     <td>${a.AdvertisedTrainIdent}</td>
     <td>${a.TechnicalTrainIdent}</td>
@@ -47,7 +51,7 @@ fun announcement(a: TrainAnnouncement): String = """
     <td>${a.composition()}</td>
     <td>${a.booking()}</td>
     <td>${a.InformationOwner}</td>
-    <td>${a.LocationSignature}</td>
+    <td>${stations?.get(a.LocationSignature)?.first()?.AdvertisedShortLocationName}</td>
     <td>${a.WebLink}</td>
     <td>${a.MobileWebLink}</td>
     <td>${a.TypeOfTraffic}</td>
@@ -59,12 +63,32 @@ fun announcement(a: TrainAnnouncement): String = """
 """
 
 
+private fun stations(): Map<String?, List<TrainStation>>? {
+    val target: Response = JavaHttpClient()(Request(Method.POST, "http://api.trafikinfo.trafikverket.se/v1.2/data.json")
+            .with(Header.CONTENT_TYPE of ContentType.APPLICATION_XML)
+            .body(stationsQuery().trimMargin()))
+    return try {
+        val list: List<TrainStation>? = Body.auto<StationsWrapper>()
+                .toLens()
+                .extract(target)
+                .RESPONSE
+                ?.RESULT
+                ?.first()
+                ?.TrainStation
+        list?.groupBy(TrainStation::LocationSignature)
+    } catch (e: Exception) {
+        println(e)
+        println(target)
+        emptyMap()
+    }
+}
+
 private fun announcements(location: String?): List<TrainAnnouncement>? {
     val target: Response = JavaHttpClient()(Request(Method.POST, "http://api.trafikinfo.trafikverket.se/v1.2/data.json")
             .with(Header.CONTENT_TYPE of ContentType.APPLICATION_XML)
-            .body(xmlBody(location).trimMargin()))
+            .body(announcementQuery(location).trimMargin()))
     return try {
-        Body.auto<Base>()
+        Body.auto<AnnouncementsWrapper>()
                 .toLens()
                 .extract(target)
                 .RESPONSE
@@ -78,18 +102,30 @@ private fun announcements(location: String?): List<TrainAnnouncement>? {
     }
 }
 
-private fun xmlBody(location: String?): String = """<REQUEST>
+private fun announcementQuery(location: String?): String = """<REQUEST>
                 |<LOGIN authenticationkey='$key' />
                 |<QUERY objecttype="TrainAnnouncement" orderby="AdvertisedTimeAtLocation">
                 |<FILTER>
                 |<AND>
-                |<EQ name="ActivityType" value="Avgang" />
                 |<EQ name="LocationSignature" value="${location ?: 'N'}" />
-                |<AND>
-                |<GT name="AdvertisedTimeAtLocation" value="${"$"}dateadd(-00:30:00)" />
-                |<LT name="AdvertisedTimeAtLocation" value="${"$"}dateadd(00:30:00)" />
-                |</AND>
+                |<GT name="AdvertisedTimeAtLocation" value="${"$"}dateadd(-00:15:00)" />
+                |<LT name="AdvertisedTimeAtLocation" value="${"$"}dateadd(00:15:00)" />
                 |</AND>
                 |</FILTER>
                 |</QUERY>
                 |</REQUEST>"""
+
+private fun stationsQuery(): String = """<REQUEST>
+     <LOGIN authenticationkey='$key' />
+     <QUERY objecttype='TrainStation'>
+      <FILTER>
+       <OR>
+         <IN name='CountyNo' value='1' />
+         <EQ name='LocationSignature' value='U' />
+         <EQ name='LocationSignature' value='Kn' />
+         <EQ name='LocationSignature' value='Gn' />
+         <EQ name='LocationSignature' value='Bål' />
+       </OR>
+      </FILTER>
+     </QUERY>
+    </REQUEST>"""
