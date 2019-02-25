@@ -23,10 +23,11 @@ fun main() {
 const val head = "<html><head><link rel='stylesheet' type='text/css' href='css/style.css'><meta charset='UTF-8'/><body><table>"
 
 private fun response(request: Request): Response {
+    val client = JavaHttpClient()
     return Response(OK)
             .header("content-type", ContentType.TEXT_HTML.value)
-            .body(head + announcements(request.query("location"))
-                    ?.joinToString(separator = "") { announcement(it, stations()) }
+            .body(head + announcements(request.query("location"), client)
+                    ?.joinToString(separator = "") { announcement(it, stations(client)) }
                     .orEmpty())
 }
 
@@ -63,19 +64,16 @@ fun announcement(a: TrainAnnouncement, stations: Map<String?, List<TrainStation>
 """
 
 
-private fun stations(): Map<String?, List<TrainStation>>? {
-    val target: Response = JavaHttpClient()(Request(Method.POST, "http://api.trafikinfo.trafikverket.se/v1.2/data.json")
-            .with(Header.CONTENT_TYPE of ContentType.APPLICATION_XML)
-            .body(stationsQuery().trimMargin()))
+private fun stations(client: HttpHandler): Map<String?, List<TrainStation>>? {
+    val target: Response = getResponse(client, stationsQuery().trimMargin())
     return try {
-        val list: List<TrainStation>? = Body.auto<StationsWrapper>()
+        Body.auto<StationsWrapper>()
                 .toLens()
                 .extract(target)
                 .RESPONSE
                 ?.RESULT
                 ?.first()
-                ?.TrainStation
-        list?.groupBy(TrainStation::LocationSignature)
+                ?.TrainStation?.groupBy(TrainStation::LocationSignature)
     } catch (e: Exception) {
         println(e)
         println(target)
@@ -83,10 +81,8 @@ private fun stations(): Map<String?, List<TrainStation>>? {
     }
 }
 
-private fun announcements(location: String?): List<TrainAnnouncement>? {
-    val target: Response = JavaHttpClient()(Request(Method.POST, "http://api.trafikinfo.trafikverket.se/v1.2/data.json")
-            .with(Header.CONTENT_TYPE of ContentType.APPLICATION_XML)
-            .body(announcementQuery(location).trimMargin()))
+private fun announcements(location: String?, client: HttpHandler): List<TrainAnnouncement>? {
+    val target: Response = getResponse(client, announcementQuery(location).trimMargin())
     return try {
         Body.auto<AnnouncementsWrapper>()
                 .toLens()
@@ -100,6 +96,12 @@ private fun announcements(location: String?): List<TrainAnnouncement>? {
         println(target)
         emptyList()
     }
+}
+
+private fun getResponse(client: HttpHandler, body: String): Response {
+    return client(Request(Method.POST, "http://api.trafikinfo.trafikverket.se/v1.2/data.json")
+            .with(Header.CONTENT_TYPE of ContentType.APPLICATION_XML)
+            .body(body))
 }
 
 private fun announcementQuery(location: String?): String = """<REQUEST>
