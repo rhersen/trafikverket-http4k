@@ -78,7 +78,7 @@ private fun stations(client: HttpHandler): Map<String?, List<TrainStation>> {
                 .RESPONSE
                 ?.RESULT
                 .orEmpty()
-                .flatMap { it.TrainStation.orEmpty() }
+                .flatMap { it.TrainStation }
                 .groupBy(TrainStation::LocationSignature)
     } catch (e: Exception) {
         println(e)
@@ -96,7 +96,7 @@ private fun announcements(location: String?, client: HttpHandler): List<TrainAnn
                 .RESPONSE
                 ?.RESULT
                 .orEmpty()
-                .flatMap { it.TrainAnnouncement.orEmpty() }
+                .flatMap { it.TrainAnnouncement }
     } catch (e: Exception) {
         println(e)
         println(target)
