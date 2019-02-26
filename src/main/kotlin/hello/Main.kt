@@ -28,8 +28,7 @@ private fun response(request: Request): Response {
     return Response(OK)
             .header("content-type", ContentType.TEXT_HTML.value)
             .body(head + announcements(request.query("location"), client)
-                    ?.joinToString(separator = "") { announcement(it, stations) }
-                    .orEmpty())
+                    .joinToString(separator = "") { announcement(it, stations) })
 }
 
 fun announcement(a: TrainAnnouncement, stations: Map<String?, List<TrainStation>>?): String = """
@@ -65,7 +64,7 @@ fun announcement(a: TrainAnnouncement, stations: Map<String?, List<TrainStation>
 """
 
 
-private fun stations(client: HttpHandler): Map<String?, List<TrainStation>>? {
+private fun stations(client: HttpHandler): Map<String?, List<TrainStation>> {
     var target: Response? = null
 
     return try {
@@ -78,8 +77,11 @@ private fun stations(client: HttpHandler): Map<String?, List<TrainStation>>? {
                 .extract(target)
                 .RESPONSE
                 ?.RESULT
-                ?.first()
-                ?.TrainStation?.groupBy(TrainStation::LocationSignature)
+                .orEmpty()
+                .first()
+                .TrainStation
+                .orEmpty()
+                .groupBy(TrainStation::LocationSignature)
     } catch (e: Exception) {
         println(e)
         println(target)
@@ -87,7 +89,7 @@ private fun stations(client: HttpHandler): Map<String?, List<TrainStation>>? {
     }
 }
 
-private fun announcements(location: String?, client: HttpHandler): List<TrainAnnouncement>? {
+private fun announcements(location: String?, client: HttpHandler): List<TrainAnnouncement> {
     val target: Response = getResponse(client, announcementQuery(location).trimMargin())
     return try {
         Body.auto<AnnouncementsWrapper>()
@@ -95,8 +97,10 @@ private fun announcements(location: String?, client: HttpHandler): List<TrainAnn
                 .extract(target)
                 .RESPONSE
                 ?.RESULT
-                ?.first()
-                ?.TrainAnnouncement
+                .orEmpty()
+                .first()
+                .TrainAnnouncement
+                .orEmpty()
     } catch (e: Exception) {
         println(e)
         println(target)
