@@ -40,11 +40,12 @@ data class TrainAnnouncement(
     fun deviation() = Deviation.joinToString("<br>")
     fun other() = OtherInformation.joinToString("<br>")
     fun product() = ProductInformation.joinToString("<br>")
-    fun from() = location(FromLocation)
-    fun to() = location(ToLocation)
-    fun via(): String = location(ViaToLocation)
+    fun from() = locationByPriority(FromLocation)
+    fun to() = locationByPriority(ToLocation)
+    fun via(): String = locationByPriority(ViaToLocation)
 
-    private fun location(locations: List<Location>?) = locations?.minBy { it.Priority ?: 9 }?.LocationName ?: ""
+    private fun locationByPriority(locations: List<Location>?) = locations?.minBy { it.Priority ?: 9 }?.LocationName
+            ?: ""
 
     private fun time(t: String?): String? {
         return if (t == null)
@@ -55,5 +56,13 @@ data class TrainAnnouncement(
             t.substring(11, 16)
         else
             t.substring(11)
+    }
+
+    fun location(stations: Map<String?, List<TrainStation>>): String {
+        return stations[LocationSignature]
+                .orEmpty()
+                .mapNotNull(TrainStation::AdvertisedShortLocationName)
+                .joinToString()
+                .ifEmpty { LocationSignature ?: "" }
     }
 }

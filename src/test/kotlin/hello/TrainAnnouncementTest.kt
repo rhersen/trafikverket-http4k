@@ -55,6 +55,43 @@ class TrainAnnouncementTest {
             )
 
     @Test
+    fun `location, no LocationSignature`() =
+            assertThat(
+                    TrainAnnouncement().location(emptyMap()),
+                    equalTo("")
+            )
+
+    @Test
+    fun `location, LocationSignature not found`() =
+            assertThat(
+                    TrainAnnouncement(LocationSignature = "Sta").location(emptyMap()),
+                    equalTo("Sta")
+            )
+
+    @Test
+    fun `location, LocationSignature found, but no TrainStation`() =
+            assertThat(
+                    TrainAnnouncement(LocationSignature = "Sta").location(mapOf("Sta" to emptyList())),
+                    equalTo("Sta")
+            )
+
+    @Test
+    fun `location, LocationSignature found, but empty TrainStation`() =
+            assertThat(
+                    TrainAnnouncement(LocationSignature = "Sta")
+                            .location(mapOf("Sta" to listOf(TrainStation()))),
+                    equalTo("Sta")
+            )
+
+    @Test
+    fun `location, LocationSignature found`() =
+            assertThat(
+                    TrainAnnouncement(LocationSignature = "Sta")
+                            .location(mapOf("Sta" to listOf(TrainStation(AdvertisedShortLocationName = "Stuvsta")))),
+                    equalTo("Stuvsta")
+            )
+
+    @Test
     fun `via, null`() =
             assertThat(
                     TrainAnnouncement().via(),
