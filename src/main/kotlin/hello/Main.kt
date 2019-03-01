@@ -34,11 +34,11 @@ private fun response(request: Request): Response {
 fun announcement(a: TrainAnnouncement, stations: Map<String?, List<TrainStation>>): String = """
   <tr>
     <td>${a.AdvertisedTrainIdent}</td>
-    <td>${a.TechnicalTrainIdent}</td>
-    <td>${a.ActivityType}</td>
     <td>${a.from(stations)}</td>
     <td>${a.to(stations)}</td>
     <td>${a.via(stations)}</td>
+    <td>${a.ActivityType}</td>
+    <td>${a.location(stations)}</td>
     <td>${a.advertised()}</td>
     <td>${a.estimated()}</td>
     <td>${a.actual()}</td>
@@ -52,7 +52,6 @@ fun announcement(a: TrainAnnouncement, stations: Map<String?, List<TrainStation>
     <td>${a.composition()}</td>
     <td>${a.booking()}</td>
     <td>${a.InformationOwner}</td>
-    <td>${a.location(stations)}</td>
     <td>${a.WebLink}</td>
     <td>${a.MobileWebLink}</td>
     <td>${a.TypeOfTraffic}</td>
