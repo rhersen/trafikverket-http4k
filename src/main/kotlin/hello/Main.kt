@@ -40,13 +40,13 @@ fun announcement(a: TrainAnnouncement, stations: Map<String?, List<TrainStation>
     <td>${a.via(stations)}</td>
     <td>${a.ActivityType}</td>
     <td>${a.location(stations)}</td>
+    <td>${a.TrackAtLocation}</td>
     <td>${a.advertised()}</td>
     <td>${a.estimated()}</td>
     <td>${a.actual()}</td>
     <td>${a.Advertised}</td>
     <td>${a.EstimatedTimeIsPreliminary}</td>
     <td>${a.PlannedEstimatedTimeAtLocationIsValid}</td>
-    <td>${a.TrackAtLocation}</td>
     <td>${a.Canceled}</td>
     <td>${a.deviation()}</td>
     <td>${a.other()}</td>
