@@ -94,7 +94,7 @@ class TrainAnnouncementTest {
     @Test
     fun `via, null`() =
             assertThat(
-                    TrainAnnouncement().via(),
+                    TrainAnnouncement().via(emptyMap()),
                     equalTo("")
             )
 
@@ -106,7 +106,7 @@ class TrainAnnouncementTest {
                             Location(LocationName = "Vhd", Priority = 3, Order = 1),
                             Location(LocationName = "Nk", Priority = 1, Order = 2),
                             Location(LocationName = "Kon", Priority = 4, Order = 3)
-                    )).via(),
+                    )).via(emptyMap()),
                     equalTo("Nk")
             )
 }

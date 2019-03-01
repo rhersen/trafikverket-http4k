@@ -36,9 +36,9 @@ fun announcement(a: TrainAnnouncement, stations: Map<String?, List<TrainStation>
     <td>${a.AdvertisedTrainIdent}</td>
     <td>${a.TechnicalTrainIdent}</td>
     <td>${a.ActivityType}</td>
-    <td>${a.from()}</td>
-    <td>${a.to()}</td>
-    <td>${a.via()}</td>
+    <td>${a.from(stations)}</td>
+    <td>${a.to(stations)}</td>
+    <td>${a.via(stations)}</td>
     <td>${a.advertised()}</td>
     <td>${a.estimated()}</td>
     <td>${a.actual()}</td>

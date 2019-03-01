@@ -40,29 +40,29 @@ data class TrainAnnouncement(
     fun deviation() = Deviation.joinToString("<br>")
     fun other() = OtherInformation.joinToString("<br>")
     fun product() = ProductInformation.joinToString("<br>")
-    fun from() = locationByPriority(FromLocation)
-    fun to() = locationByPriority(ToLocation)
-    fun via(): String = locationByPriority(ViaToLocation)
+    fun location(stations: Map<String?, List<TrainStation>>): String = location(LocationSignature, stations)
+    fun from(stations: Map<String?, List<TrainStation>>) = location(FromLocation, stations)
+    fun to(stations: Map<String?, List<TrainStation>>) = location(ToLocation, stations)
+    fun via(stations: Map<String?, List<TrainStation>>) = location(ViaToLocation, stations)
 
-    private fun locationByPriority(locations: List<Location>?) = locations?.minBy { it.Priority ?: 9 }?.LocationName
-            ?: ""
-
-    private fun time(t: String?): String? {
-        return if (t == null)
-            "-"
-        else if (t.length < 16)
-            t
-        else if (t.substring(16) == ":00")
-            t.substring(11, 16)
-        else
-            t.substring(11)
+    private fun time(t: String?): String? = when {
+        t == null -> "-"
+        t.length < 16 -> t
+        t.substring(16) == ":00" -> t.substring(11, 16)
+        else -> t.substring(11)
     }
 
-    fun location(stations: Map<String?, List<TrainStation>>): String {
-        return stations[LocationSignature]
+    private fun location(locations: List<Location>?, stations: Map<String?, List<TrainStation>>): String =
+            location(
+                    locations.orEmpty().minBy { it.Priority ?: 9 }?.LocationName,
+                    stations
+            )
+
+    private fun location(locationSignature: String?, stations: Map<String?, List<TrainStation>>): String {
+        return stations[locationSignature]
                 .orEmpty()
                 .mapNotNull(TrainStation::AdvertisedShortLocationName)
                 .joinToString()
-                .ifEmpty { LocationSignature ?: "" }
+                .ifEmpty { locationSignature ?: "" }
     }
 }
