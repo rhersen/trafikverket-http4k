@@ -8,3 +8,45 @@ td {
   border-style: solid;
   border-width: thin;
 }
+
+@media (max-width: 1440px) {
+  td.w1440 {
+    display: none;
+  }
+}
+
+@media (max-width: 1280px) {
+  td.w1280 {
+    display: none;
+  }
+}
+
+@media (max-width: 1024px) {
+  td.w1024 {
+    display: none;
+  }
+}
+
+@media (max-width: 960px) {
+  td.w960 {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  td.w640 {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  td.w480 {
+    display: none;
+  }
+}
+
+@media (max-width: 320px) {
+  td.w320 {
+    display: none;
+  }
+}

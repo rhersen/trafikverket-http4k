@@ -20,7 +20,7 @@ fun main() {
     ).asServer(Jetty(4001)).start()
 }
 
-const val head = "<html><head><link rel='stylesheet' type='text/css' href='css/style.css'><meta charset='UTF-8'/><body><table>"
+const val head = "<html><head><link rel='stylesheet' type='text/css' href='css/style.css'><meta content='true' name='HandheldFriendly'><meta content='width=device-width, height=device-height, user-scalable=no' name='viewport'><meta charset='UTF-8'/><body><table>"
 
 private fun response(request: Request): Response {
     val client = JavaHttpClient()
@@ -33,24 +33,24 @@ private fun response(request: Request): Response {
 
 fun announcement(a: TrainAnnouncement, stations: Map<String?, List<TrainStation>>): String = """
   <tr>
-    <td>${a.InformationOwner}</td>
-    <td>${a.TypeOfTraffic}</td>
-    <td>${a.AdvertisedTrainIdent}</td>
-    <td>${a.from(stations)}</td>
+    <td class="w960">${a.InformationOwner}</td>
+    <td class="w960">${a.TypeOfTraffic}</td>
+    <td class="w480">${a.AdvertisedTrainIdent}</td>
+    <td class="w640">${a.from(stations)}</td>
     <td>${a.to(stations)}</td>
-    <td>${a.via(stations)}</td>
+    <td class="w960">${a.via(stations)}</td>
     <td>${a.ActivityType}</td>
-    <td>${a.location(stations)}</td>
-    <td>${a.TrackAtLocation}</td>
+    <td class="w960">${a.location(stations)}</td>
+    <td class="w1024">${a.TrackAtLocation}</td>
     <td>${a.advertised()}</td>
     <td>${a.estimated()}</td>
     <td>${a.actual()}</td>
-    <td>${a.Canceled}</td>
-    <td>${a.deviation()}</td>
-    <td>${a.other()}</td>
-    <td>${a.composition()}</td>
-    <td>${a.booking()}</td>
-    <td>${a.product()}</td>
+    <td class="w480">${a.Canceled}</td>
+    <td class="w480">${a.deviation()}</td>
+    <td class="w1280">${a.other()}</td>
+    <td class="w1280">${a.composition()}</td>
+    <td class="w1440">${a.booking()}</td>
+    <td class="w1280">${a.product()}</td>
   </tr>
 """
 
