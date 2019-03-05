@@ -56,16 +56,9 @@ fun announcement(a: TrainAnnouncement, stations: Map<String?, List<TrainStation>
 
 
 private fun stations(client: HttpHandler): Map<String?, List<TrainStation>> {
-    var target: Response? = null
 
     return try {
-        val readText: String? = Classpath().load("cache/stations.json")?.readText()
-        target = if (readText == null) getResponse(client, stationsQuery().trimMargin())
-        else Response(OK).body(readText)
-
-        Body.auto<StationsWrapper>()
-                .toLens()
-                .extract(target)
+        Stations().stationsWrapper(client)
                 .RESPONSE
                 ?.RESULT
                 .orEmpty()
@@ -73,13 +66,14 @@ private fun stations(client: HttpHandler): Map<String?, List<TrainStation>> {
                 .groupBy(TrainStation::LocationSignature)
     } catch (e: Exception) {
         println(e)
-        println(target)
         emptyMap()
     }
 }
 
 private fun announcements(location: String?, client: HttpHandler): List<TrainAnnouncement> {
-    val target: Response = getResponse(client, announcementQuery(location).trimMargin())
+    val target: Response = client(Request(Method.POST, "http://api.trafikinfo.trafikverket.se/v1.2/data.json")
+            .with(Header.CONTENT_TYPE of ContentType.APPLICATION_XML)
+            .body(announcementQuery(location).trimMargin()))
     return try {
         Body.auto<AnnouncementsWrapper>()
                 .toLens()
@@ -95,12 +89,6 @@ private fun announcements(location: String?, client: HttpHandler): List<TrainAnn
     }
 }
 
-private fun getResponse(client: HttpHandler, body: String): Response {
-    return client(Request(Method.POST, "http://api.trafikinfo.trafikverket.se/v1.2/data.json")
-            .with(Header.CONTENT_TYPE of ContentType.APPLICATION_XML)
-            .body(body))
-}
-
 private fun announcementQuery(location: String?): String = """<REQUEST>
                 |<LOGIN authenticationkey='$key' />
                 |<QUERY objecttype="TrainAnnouncement" orderby="AdvertisedTimeAtLocation">
@@ -114,17 +102,3 @@ private fun announcementQuery(location: String?): String = """<REQUEST>
                 |</QUERY>
                 |</REQUEST>"""
 
-private fun stationsQuery(): String = """<REQUEST>
-     <LOGIN authenticationkey='$key' />
-     <QUERY objecttype='TrainStation'>
-      <FILTER>
-       <OR>
-         <IN name='CountyNo' value='1' />
-         <EQ name='LocationSignature' value='U' />
-         <EQ name='LocationSignature' value='Kn' />
-         <EQ name='LocationSignature' value='Gn' />
-         <EQ name='LocationSignature' value='Bål' />
-       </OR>
-      </FILTER>
-     </QUERY>
-    </REQUEST>"""
