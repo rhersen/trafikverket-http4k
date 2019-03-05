@@ -5,7 +5,7 @@ import org.http4k.format.Gson.auto
 import org.http4k.lens.Header
 import org.http4k.routing.ResourceLoader
 
-class Stations {
+object Stations {
     fun stationsWrapper(client: HttpHandler): StationsWrapper {
         val readText: String? = ResourceLoader.Classpath().load("cache/stations.json")?.readText()
 

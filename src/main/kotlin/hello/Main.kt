@@ -58,7 +58,7 @@ fun announcement(a: TrainAnnouncement, stations: Map<String?, List<TrainStation>
 private fun stations(client: HttpHandler): Map<String?, List<TrainStation>> {
 
     return try {
-        Stations().stationsWrapper(client)
+        Stations.stationsWrapper(client)
                 .RESPONSE
                 ?.RESULT
                 .orEmpty()
