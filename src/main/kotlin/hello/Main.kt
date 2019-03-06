@@ -17,19 +17,34 @@ fun main() {
     routes(
             "/css" bind static(Classpath("/css")),
             "favicon.ico" bind Method.GET to { Response(OK) },
-            "/location/{location}" bind Method.GET to ::response
+            "/location/{location}" bind Method.GET to ::location,
+            "/" bind Method.GET to { index() }
     ).asServer(Jetty(4001)).start()
 }
 
 const val head = "<html><head><link rel='stylesheet' type='text/css' href='/css/style.css'><meta content='true' name='HandheldFriendly'><meta content='width=device-width, height=device-height, user-scalable=no' name='viewport'><meta charset='UTF-8'/><body><table>"
 
-private fun response(request: Request): Response {
+private fun index(): Response {
+    val client = JavaHttpClient()
+    val stations = stations(client)
+    return Response(OK)
+            .header("content-type", ContentType.TEXT_HTML.value)
+            .body(head + locations(client)
+                    .joinToString { location(it, stations) })
+}
+
+private fun location(request: Request): Response {
     val client = JavaHttpClient()
     val stations = stations(client)
     return Response(OK)
             .header("content-type", ContentType.TEXT_HTML.value)
             .body(head + announcements(request.path("location"), client)
                     .joinToString(separator = "") { announcement(it, stations) })
+}
+
+fun location(a: TrainAnnouncement, stations: Map<String?, List<TrainStation>>): String {
+    val locationSignature = a.LocationSignature
+    return """<a href="location/$locationSignature">${a.location(stations)}</a>"""
 }
 
 fun announcement(a: TrainAnnouncement, stations: Map<String?, List<TrainStation>>): String = """
@@ -55,9 +70,7 @@ fun announcement(a: TrainAnnouncement, stations: Map<String?, List<TrainStation>
   </tr>
 """
 
-
 private fun stations(client: HttpHandler): Map<String?, List<TrainStation>> {
-
     return try {
         Stations.stationsWrapper(client)
                 .RESPONSE
@@ -68,6 +81,25 @@ private fun stations(client: HttpHandler): Map<String?, List<TrainStation>> {
     } catch (e: Exception) {
         println(e)
         emptyMap()
+    }
+}
+
+private fun locations(client: HttpHandler): List<TrainAnnouncement> {
+    val target: Response = client(Request(Method.POST, "http://api.trafikinfo.trafikverket.se/v1.2/data.json")
+            .with(Header.CONTENT_TYPE of ContentType.APPLICATION_XML)
+            .body(locationsQuery().trimMargin()))
+    return try {
+        Body.auto<AnnouncementsWrapper>()
+                .toLens()
+                .extract(target)
+                .RESPONSE
+                ?.RESULT
+                .orEmpty()
+                .flatMap { it.TrainAnnouncement }
+    } catch (e: Exception) {
+        println(e)
+        println(target)
+        emptyList()
     }
 }
 
@@ -89,6 +121,18 @@ private fun announcements(location: String?, client: HttpHandler): List<TrainAnn
         emptyList()
     }
 }
+
+private fun locationsQuery(): String = """<REQUEST>
+                |<LOGIN authenticationkey='$key' />
+                |<QUERY objecttype="TrainAnnouncement" orderby="AdvertisedTimeAtLocation">
+                |<FILTER>
+                |<AND>
+                |<GT name="AdvertisedTimeAtLocation" value="${"$"}dateadd(00:00:00)" />
+                |<LT name="AdvertisedTimeAtLocation" value="${"$"}dateadd(00:01:00)" />
+                |</AND>
+                |</FILTER>
+                |</QUERY>
+                |</REQUEST>"""
 
 private fun announcementQuery(location: String?): String = """<REQUEST>
                 |<LOGIN authenticationkey='$key' />
