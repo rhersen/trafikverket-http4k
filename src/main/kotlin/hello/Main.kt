@@ -7,6 +7,7 @@ import org.http4k.format.Gson.auto
 import org.http4k.lens.Header
 import org.http4k.routing.ResourceLoader.Companion.Classpath
 import org.http4k.routing.bind
+import org.http4k.routing.path
 import org.http4k.routing.routes
 import org.http4k.routing.static
 import org.http4k.server.Jetty
@@ -16,18 +17,18 @@ fun main() {
     routes(
             "/css" bind static(Classpath("/css")),
             "favicon.ico" bind Method.GET to { Response(OK) },
-            "" bind Method.GET to ::response
+            "/location/{location}" bind Method.GET to ::response
     ).asServer(Jetty(4001)).start()
 }
 
-const val head = "<html><head><link rel='stylesheet' type='text/css' href='css/style.css'><meta content='true' name='HandheldFriendly'><meta content='width=device-width, height=device-height, user-scalable=no' name='viewport'><meta charset='UTF-8'/><body><table>"
+const val head = "<html><head><link rel='stylesheet' type='text/css' href='/css/style.css'><meta content='true' name='HandheldFriendly'><meta content='width=device-width, height=device-height, user-scalable=no' name='viewport'><meta charset='UTF-8'/><body><table>"
 
 private fun response(request: Request): Response {
     val client = JavaHttpClient()
     val stations = stations(client)
     return Response(OK)
             .header("content-type", ContentType.TEXT_HTML.value)
-            .body(head + announcements(request.query("location"), client)
+            .body(head + announcements(request.path("location"), client)
                     .joinToString(separator = "") { announcement(it, stations) })
 }
 
