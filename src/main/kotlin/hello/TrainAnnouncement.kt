@@ -61,8 +61,16 @@ data class TrainAnnouncement(
     private fun location(locationSignature: String?, stations: Map<String?, List<TrainStation>>): String {
         return stations[locationSignature]
                 .orEmpty()
-                .mapNotNull(TrainStation::AdvertisedShortLocationName)
+                .mapNotNull { it.AdvertisedShortLocationName }
                 .joinToString()
                 .ifEmpty { locationSignature ?: "" }
     }
+
+    fun north(stations: Map<String?, List<TrainStation>>): String? =
+            stations[LocationSignature]
+                    .orEmpty()
+                    .mapNotNull { it.Geometry }
+                    .mapNotNull { it.SWEREF99TM }
+                    .map { it.substring(14) }
+                    .first()
 }

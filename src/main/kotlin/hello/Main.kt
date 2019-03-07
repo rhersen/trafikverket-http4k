@@ -29,7 +29,7 @@ private fun index(): Response {
     val stations = stations(client)
     return Response(OK)
             .header("content-type", ContentType.TEXT_HTML.value)
-            .body(head + locations(client)
+            .body(head + locations(client, stations)
                     .joinToString { location(it, stations) })
 }
 
@@ -84,7 +84,7 @@ private fun stations(client: HttpHandler): Map<String?, List<TrainStation>> {
     }
 }
 
-private fun locations(client: HttpHandler): List<TrainAnnouncement> {
+private fun locations(client: HttpHandler, stations: Map<String?, List<TrainStation>>): List<TrainAnnouncement> {
     val target: Response = client(Request(Method.POST, "http://api.trafikinfo.trafikverket.se/v1.2/data.json")
             .with(Header.CONTENT_TYPE of ContentType.APPLICATION_XML)
             .body(locationsQuery().trimMargin()))
@@ -96,6 +96,8 @@ private fun locations(client: HttpHandler): List<TrainAnnouncement> {
                 ?.RESULT
                 .orEmpty()
                 .flatMap { it.TrainAnnouncement }
+                .sortedBy { it.north(stations) }
+                .distinctBy { it.LocationSignature }
     } catch (e: Exception) {
         println(e)
         println(target)
