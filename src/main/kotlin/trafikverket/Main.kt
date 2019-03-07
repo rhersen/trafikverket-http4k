@@ -22,9 +22,9 @@ fun main() {
     ).asServer(Jetty(4001)).start()
 }
 
-const val head = "<html><head><link rel='stylesheet' type='text/css' href='/css/style.css'><meta content='true' name='HandheldFriendly'><meta content='width=device-width, height=device-height, user-scalable=no' name='viewport'><meta charset='UTF-8'/><body><table>"
+private const val head = "<html><head><link rel='stylesheet' type='text/css' href='/css/style.css'><meta content='true' name='HandheldFriendly'><meta content='width=device-width, height=device-height, user-scalable=no' name='viewport'><meta charset='UTF-8'/><body><table>"
 
-fun index(): Response {
+private fun index(): Response {
     val client = JavaHttpClient()
     val stations = stations(client)
     return Response(OK)
@@ -33,7 +33,7 @@ fun index(): Response {
                     .joinToString { location(it, stations) })
 }
 
-fun location(request: Request): Response {
+private fun location(request: Request): Response {
     val client = JavaHttpClient()
     val stations = stations(client)
     return Response(OK)
@@ -42,7 +42,7 @@ fun location(request: Request): Response {
                     .joinToString(separator = "") { announcement(it, stations) })
 }
 
-fun stations(client: HttpHandler): Map<String?, List<TrainStation>> {
+private fun stations(client: HttpHandler): Map<String?, List<TrainStation>> {
     return try {
         Stations.stationsWrapper(client)
                 .RESPONSE
