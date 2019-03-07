@@ -1,4 +1,4 @@
-package hello
+package trafikverket
 
 data class StationsWrapper(val RESPONSE: StationsResultWrapper?)
 

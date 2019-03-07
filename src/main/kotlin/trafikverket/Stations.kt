@@ -1,4 +1,4 @@
-package hello
+package trafikverket
 
 import org.http4k.core.*
 import org.http4k.format.Gson.auto

@@ -1,4 +1,4 @@
-package hello
+package trafikverket
 
 data class Location(val LocationName: String?, val Priority: Int?, val Order: Int?)
 

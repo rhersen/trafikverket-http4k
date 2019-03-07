@@ -1,4 +1,4 @@
-package hello
+package trafikverket
 
 data class AnnouncementsWrapper(val RESPONSE: AnnouncementsResultWrapper?)
 
