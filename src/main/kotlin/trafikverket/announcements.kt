@@ -9,18 +9,18 @@ fun announcement(a: TrainAnnouncement, stations: Map<String?, List<TrainStation>
     <td class="w960">${a.InformationOwner}</td>
     <td class="w960">${a.TypeOfTraffic}</td>
     <td class="w480">${a.AdvertisedTrainIdent}</td>
-    <td class="w640">${a.from(stations)}</td>
+    <td class="w960">${a.from(stations)}</td>
     <td>${a.to(stations)}</td>
     <td class="w960">${a.via(stations)}</td>
     <td>${a.ActivityType}</td>
-    <td class="w960">${a.location(stations)}</td>
-    <td class="w1024">${a.TrackAtLocation}</td>
+    <td class="w1440">${a.location(stations)}</td>
+    <td class="w640">${a.TrackAtLocation}</td>
     <td>${a.advertised()}</td>
     <td>${a.estimated()}</td>
     <td>${a.actual()}</td>
     <td class="w480">${a.Canceled}</td>
     <td class="w480">${a.deviation()}</td>
-    <td class="w1280">${a.other()}</td>
+    <td class="w1024">${a.other()}</td>
     <td class="w1280">${a.composition()}</td>
     <td class="w1440">${a.booking()}</td>
     <td class="w1280">${a.product()}</td>
@@ -41,6 +41,7 @@ fun announcements(location: String?, client: HttpHandler): List<TrainAnnouncemen
                 .flatMap { it.TrainAnnouncement }
     } catch (e: Exception) {
         println(e)
+        e.printStackTrace()
         println(target)
         emptyList()
     }

@@ -3,8 +3,6 @@ package trafikverket
 import org.http4k.client.JavaHttpClient
 import org.http4k.core.*
 import org.http4k.core.Status.Companion.OK
-import org.http4k.format.Gson.auto
-import org.http4k.lens.Header
 import org.http4k.routing.ResourceLoader.Companion.Classpath
 import org.http4k.routing.bind
 import org.http4k.routing.path
@@ -36,10 +34,26 @@ private fun index(): Response {
 private fun location(request: Request): Response {
     val client = JavaHttpClient()
     val stations = stations(client)
+    val announcements = announcements(request.path("location"), client)
     return Response(OK)
             .header("content-type", ContentType.TEXT_HTML.value)
-            .body(head + announcements(request.path("location"), client)
-                    .joinToString(separator = "") { announcement(it, stations) })
+            .body(head +
+                    station(announcements, stations) +
+                    announcements.joinToString(separator = "") { announcement(it, stations) })
+}
+
+private fun station(announcements: List<TrainAnnouncement>, stations: Map<String?, List<TrainStation>>): String {
+    fun location(announcement: TrainAnnouncement): String {
+        val locationSignature = announcement.LocationSignature
+        return stations[locationSignature]
+                .orEmpty()
+                .joinToString { "<h1>${it.AdvertisedLocationName}</h1><span>${it.LocationInformationText}</span" }
+                .ifEmpty { locationSignature ?: "" }
+    }
+
+    return announcements
+            .distinctBy { it.LocationSignature }
+            .joinToString(transform = ::location)
 }
 
 private fun stations(client: HttpHandler): Map<String?, List<TrainStation>> {
