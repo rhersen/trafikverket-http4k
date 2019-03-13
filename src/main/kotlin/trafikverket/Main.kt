@@ -39,6 +39,8 @@ private fun location(request: Request): Response {
             .header("content-type", ContentType.TEXT_HTML.value)
             .body(head +
                     station(announcements, stations) +
+                    "<table><tbody>" +
+                    columnHeadings() +
                     announcements.joinToString(separator = "") { announcement(it, stations) })
 }
 

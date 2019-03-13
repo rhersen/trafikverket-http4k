@@ -12,6 +12,11 @@ td {
   border-width: thin;
 }
 
+tr.headings td {
+  font-weight: bold;
+  text-align: center;
+}
+
 @media (max-width: 1440px) {
   td.w1440 {
     display: none;

@@ -4,9 +4,33 @@ import org.http4k.core.*
 import org.http4k.format.Gson.auto
 import org.http4k.lens.Header
 
+fun columnHeadings(): String = """
+  <tr class="headings">
+    <td class="w960">produkt</td>
+    <td class="w1440">ägare</td>
+    <td class="w960">typ</td>
+    <td class="w480">id</td>
+    <td class="w960">från</td>
+    <td>till</td>
+    <td class="w960">via</td>
+    <td>typ</td>
+    <td class="w1440">station</td>
+    <td class="w640">spår</td>
+    <td>tab</td>
+    <td>sen</td>
+    <td>vrk</td>
+    <td class="w480">inst</td>
+    <td class="w480">avvikelse</td>
+    <td class="w1024">övrigt</td>
+    <td class="w1280">ordning</td>
+    <td class="w1440">bokning</td>
+  </tr>
+"""
+
 fun announcement(a: TrainAnnouncement, stations: Map<String?, List<TrainStation>>): String = """
   <tr>
-    <td class="w960">${a.InformationOwner}</td>
+    <td class="w960">${a.product()}</td>
+    <td class="w1440">${a.InformationOwner}</td>
     <td class="w960">${a.TypeOfTraffic}</td>
     <td class="w480">${a.AdvertisedTrainIdent}</td>
     <td class="w960">${a.from(stations)}</td>
@@ -23,7 +47,6 @@ fun announcement(a: TrainAnnouncement, stations: Map<String?, List<TrainStation>
     <td class="w1024">${a.other()}</td>
     <td class="w1280">${a.composition()}</td>
     <td class="w1440">${a.booking()}</td>
-    <td class="w1280">${a.product()}</td>
   </tr>
 """
 
