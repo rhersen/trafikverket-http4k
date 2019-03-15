@@ -46,17 +46,14 @@ data class TrainAnnouncement(
     fun via(stations: Map<String?, List<TrainStation>>) = location(ViaToLocation, stations)
 
     private fun time(t: String?): String? = when {
-        t == null -> "-"
+        t == null -> ""
         t.length < 16 -> t
         t.substring(16) == ":00" -> t.substring(11, 16)
         else -> t.substring(11)
     }
 
     private fun location(locations: List<Location>?, stations: Map<String?, List<TrainStation>>): String =
-            location(
-                    locations.orEmpty().minBy { it.Priority ?: 9 }?.LocationName,
-                    stations
-            )
+            locations.orEmpty().map { location(it.LocationName, stations) }.joinToString(" ")
 
     private fun location(locationSignature: String?, stations: Map<String?, List<TrainStation>>): String {
         return stations[locationSignature]

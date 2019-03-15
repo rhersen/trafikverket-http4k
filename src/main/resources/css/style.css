@@ -17,6 +17,10 @@ tr.headings td {
   text-align: center;
 }
 
+.details span {
+  font-size: small;
+}
+
 @media (max-width: 1440px) {
   td.w1440 {
     display: none;

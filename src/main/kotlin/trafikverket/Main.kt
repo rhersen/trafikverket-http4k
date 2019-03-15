@@ -10,6 +10,8 @@ import org.http4k.routing.routes
 import org.http4k.routing.static
 import org.http4k.server.Jetty
 import org.http4k.server.asServer
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 fun main() {
     routes(
@@ -39,7 +41,6 @@ private fun location(request: Request): Response {
             .header("content-type", ContentType.TEXT_HTML.value)
             .body(head +
                     station(announcements, stations) +
-                    "<table><tbody>" +
                     columnHeadings() +
                     announcements.joinToString(separator = "") { announcement(it, stations) })
 }
@@ -49,7 +50,7 @@ private fun station(announcements: List<TrainAnnouncement>, stations: Map<String
         val locationSignature = announcement.LocationSignature
         return stations[locationSignature]
                 .orEmpty()
-                .joinToString { "<h1>${it.AdvertisedLocationName}</h1><span>${it.LocationInformationText}</span" }
+                .joinToString { "<div><span>Avgående tåg - ${it.AdvertisedLocationName}</span><span>${LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm"))}</span></div>" }
                 .ifEmpty { locationSignature ?: "" }
     }
 

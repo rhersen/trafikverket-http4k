@@ -5,49 +5,37 @@ import org.http4k.format.Gson.auto
 import org.http4k.lens.Header
 
 fun columnHeadings(): String = """
-  <tr class="headings">
-    <td class="w960">produkt</td>
-    <td class="w1440">ägare</td>
-    <td class="w960">typ</td>
-    <td class="w480">id</td>
-    <td class="w960">från</td>
-    <td>till</td>
-    <td class="w960">via</td>
-    <td>typ</td>
-    <td class="w1440">station</td>
-    <td class="w640">spår</td>
-    <td>tab</td>
-    <td>sen</td>
-    <td>vrk</td>
-    <td class="w480">inst</td>
-    <td class="w480">avvikelse</td>
-    <td class="w1024">övrigt</td>
-    <td class="w1280">ordning</td>
-    <td class="w1440">bokning</td>
-  </tr>
+  <div class="headings">
+    <div>
+      <span>Till</span>
+      <span>Tid</span>
+      <span>Ny tid</span>
+      <span class="w640">Spår</span>
+      <span class="w480">Anmärkning</span>
+      <span class="w960">produkt</span>
+    </div>
+    <div>
+      <span class="w960">Typ</span>
+      <span class="w480">Id</span>
+      <span class="w960">Via</span>
+  </div>
 """
 
 fun announcement(a: TrainAnnouncement, stations: Map<String?, List<TrainStation>>): String = """
-  <tr>
-    <td class="w960">${a.product()}</td>
-    <td class="w1440">${a.InformationOwner}</td>
-    <td class="w960">${a.TypeOfTraffic}</td>
-    <td class="w480">${a.AdvertisedTrainIdent}</td>
-    <td class="w960">${a.from(stations)}</td>
-    <td>${a.to(stations)}</td>
-    <td class="w960">${a.via(stations)}</td>
-    <td>${a.ActivityType}</td>
-    <td class="w1440">${a.location(stations)}</td>
-    <td class="w640">${a.TrackAtLocation}</td>
-    <td>${a.advertised()}</td>
-    <td>${a.estimated()}</td>
-    <td>${a.actual()}</td>
-    <td class="w480">${a.Canceled}</td>
-    <td class="w480">${a.deviation()}</td>
-    <td class="w1024">${a.other()}</td>
-    <td class="w1280">${a.composition()}</td>
-    <td class="w1440">${a.booking()}</td>
-  </tr>
+  <div class="Train">
+    <div class="main">
+      <span class="to">${a.to(stations)}</span>
+      <span class="advertised">${a.advertised()}</span>
+      <span class="estimated">${a.estimated()}</span>
+      <span class="track">${a.TrackAtLocation}</span>
+      <span class="deviation">${a.deviation()}</span>
+      <span class="product">${a.product()}</span>
+    </div>
+    <div class="details">
+      <span class="type">${a.TypeOfTraffic}</span>
+      <span class="id">${a.AdvertisedTrainIdent}</span>
+      <span class="via">${a.via(stations)}</span>
+  </div>
 """
 
 fun announcements(location: String?, client: HttpHandler): List<TrainAnnouncement> {
@@ -75,9 +63,10 @@ private fun announcementQuery(location: String?): String = """<REQUEST>
                 |<QUERY objecttype="TrainAnnouncement" orderby="AdvertisedTimeAtLocation">
                 |<FILTER>
                 |<AND>
-                |<EQ name="LocationSignature" value="${location ?: 'N'}" />
-                |<GT name="AdvertisedTimeAtLocation" value="${"$"}dateadd(-00:15:00)" />
-                |<LT name="AdvertisedTimeAtLocation" value="${"$"}dateadd(00:15:00)" />
+                |<EQ name="LocationSignature" value="${location ?: "Cst"}" />
+                |<EQ name="ActivityType" value="Avgang" />
+                |<GT name="AdvertisedTimeAtLocation" value="${"$"}dateadd(-00:01:00)" />
+                |<LT name="AdvertisedTimeAtLocation" value="${"$"}dateadd(00:59:00)" />
                 |</AND>
                 |</FILTER>
                 |</QUERY>
