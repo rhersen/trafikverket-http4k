@@ -34,7 +34,6 @@ tr.headings td {
 
 .details {
   display: flex;
-  justify-content: space-between;
 }
 
 @media (max-width: 1440px) {

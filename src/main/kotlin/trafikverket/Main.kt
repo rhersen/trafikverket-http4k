@@ -48,7 +48,9 @@ private fun location(request: Request): Response {
             .body(head +
                     station(announcements, stations) +
                     columnHeadings() +
-                    announcements.joinToString(separator = "") { announcement(it, stations) })
+                    announcements
+                            .filter { it.ProductInformation.isNotEmpty() }
+                            .joinToString(separator = "") { announcement(it, stations) })
 }
 
 private fun station(announcements: List<TrainAnnouncement>, stations: Map<String?, List<TrainStation>>): String {
