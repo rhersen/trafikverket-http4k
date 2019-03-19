@@ -7,8 +7,8 @@ import org.http4k.lens.Header
 fun columnHeadings(): String = """
   <div class="headings">
     <div>
-      <span>Till</span>
       <span>Tid</span>
+      <span>Till</span>
       <span>Ny tid</span>
       <span class="w640">Spår</span>
       <span class="w480">Anmärkning</span>
@@ -22,10 +22,10 @@ fun columnHeadings(): String = """
 """
 
 fun announcement(a: TrainAnnouncement, stations: Map<String?, List<TrainStation>>): String = """
-  <div class="Train">
+  <div class="train">
     <div class="main">
-      <span class="to">${a.to(stations)}</span>
       <span class="advertised">${a.advertised()}</span>
+      <span class="to">${a.to(stations)}</span>
       <span class="estimated">${a.estimated()}</span>
       <span class="track">${a.TrackAtLocation}</span>
       <span class="deviation">${a.deviation()}</span>
@@ -35,6 +35,7 @@ fun announcement(a: TrainAnnouncement, stations: Map<String?, List<TrainStation>
       <span class="type">${a.TypeOfTraffic}</span>
       <span class="id">${a.AdvertisedTrainIdent}</span>
       <span class="via">${a.via(stations)}</span>
+    </div>
   </div>
 """
 

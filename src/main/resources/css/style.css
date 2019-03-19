@@ -1,5 +1,7 @@
 body {
-  font-family: sans-serif;
+  font-family: "Arial Narrow", Arial, sans-serif;
+  color: yellow;
+  background-color: slategray;
 }
 
 table {
@@ -17,8 +19,22 @@ tr.headings td {
   text-align: center;
 }
 
-.details span {
-  font-size: small;
+.train:nth-child(odd) {
+  background-color: black;
+}
+
+.main {
+  display: flex;
+  justify-content: space-between;
+}
+
+.main span {
+  font-size: x-large;
+}
+
+.details {
+  display: flex;
+  justify-content: space-between;
 }
 
 @media (max-width: 1440px) {
