@@ -22,7 +22,13 @@ fun main() {
     ).asServer(Jetty(4001)).start()
 }
 
-private const val head = "<html><head><link rel='stylesheet' type='text/css' href='/css/style.css'><meta content='true' name='HandheldFriendly'><meta content='width=device-width, height=device-height, user-scalable=no' name='viewport'><meta charset='UTF-8'/><body><table>"
+private const val head = "<html>" +
+        "<head>" +
+        "<link rel='stylesheet' type='text/css' href='/css/style.css'>" +
+        "<meta content='true' name='HandheldFriendly'>" +
+        "<meta content='width=device-width, height=device-height, user-scalable=no' name='viewport'>" +
+        "<meta charset='UTF-8'/>" +
+        "<body>"
 
 private fun index(): Response {
     val client = JavaHttpClient()
@@ -50,7 +56,13 @@ private fun station(announcements: List<TrainAnnouncement>, stations: Map<String
         val locationSignature = announcement.LocationSignature
         return stations[locationSignature]
                 .orEmpty()
-                .joinToString { "<div><span>Avgående tåg - ${it.AdvertisedLocationName}</span><span>${LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm"))}</span></div>" }
+                .joinToString {
+                    "<div><span>Avgående tåg - ${
+                    it.AdvertisedLocationName
+                    }</span><span>${
+                    LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm"))
+                    }</span></div>"
+                }
                 .ifEmpty { locationSignature ?: "" }
     }
 
