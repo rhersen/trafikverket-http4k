@@ -1,5 +1,5 @@
 body {
-  font-family: "Arial Narrow", Arial, sans-serif;
+  font-family: sans-serif;
   color: yellow;
   background-color: slategray;
 }
@@ -27,8 +27,8 @@ tr.headings td {
   display: flex;
 }
 
-.train .main span {
-  font-size: x-large;
+.train .main {
+  font-size: 18px;
 }
 
 .train .main .advertised {
@@ -49,8 +49,13 @@ tr.headings td {
   text-align: right;
 }
 
-.details {
+.train .details {
+  font-size: 14px;
   display: flex;
+}
+
+.train .details .id {
+  width: 21%;
 }
 
 @media (max-width: 1440px) {

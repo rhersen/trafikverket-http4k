@@ -38,6 +38,7 @@ data class TrainAnnouncement(
     fun booking() = Booking.joinToString(" ")
     fun composition() = TrainComposition.joinToString("<br>")
     fun deviation() = if (Deviation.isNotEmpty()) Deviation.joinToString("<br>") else ProductInformation.joinToString("<br>")
+    fun id() = "$TypeOfTraffic $AdvertisedTrainIdent"
     fun other() = OtherInformation.joinToString("<br>")
     fun product() = ProductInformation.joinToString("<br>")
     fun location(stations: Map<String?, List<TrainStation>>): String = location(LocationSignature, stations)

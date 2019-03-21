@@ -30,8 +30,7 @@ fun announcement(a: TrainAnnouncement, stations: Map<String?, List<TrainStation>
       <span class="deviation">${a.deviation()}</span>
     </div>
     <div class="details">
-      <span class="type">${a.TypeOfTraffic}</span>
-      <span class="id">${a.AdvertisedTrainIdent}</span>
+      <span class="id">${a.id()}</span>
       <span class="via">${a.via(stations)}</span>
     </div>
   </div>
