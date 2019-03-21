@@ -12,7 +12,6 @@ fun columnHeadings(): String = """
       <span>Ny tid</span>
       <span class="w640">Spår</span>
       <span class="w480">Anmärkning</span>
-      <span class="w960">produkt</span>
     </div>
     <div>
       <span class="w960">Typ</span>
@@ -29,7 +28,6 @@ fun announcement(a: TrainAnnouncement, stations: Map<String?, List<TrainStation>
       <span class="estimated">${a.estimated()}</span>
       <span class="track">${a.TrackAtLocation}</span>
       <span class="deviation">${a.deviation()}</span>
-      <span class="product">${a.product()}</span>
     </div>
     <div class="details">
       <span class="type">${a.TypeOfTraffic}</span>

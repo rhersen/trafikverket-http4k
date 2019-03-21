@@ -23,13 +23,30 @@ tr.headings td {
   background-color: black;
 }
 
-.main {
+.train .main {
   display: flex;
-  justify-content: space-between;
 }
 
-.main span {
+.train .main span {
   font-size: x-large;
+}
+
+.train .main .advertised {
+  width: 15%;
+}
+
+.train .main .to {
+  flex-grow: 8;
+}
+
+.train .main .track {
+  width: 11%;
+  text-align: right;
+}
+
+.train .main .deviation {
+  width: 33%;
+  text-align: right;
 }
 
 .details {
