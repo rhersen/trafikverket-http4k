@@ -23,12 +23,21 @@ tr.headings td {
   background-color: black;
 }
 
+.train {
+  padding-top: 0.2em;
+  padding-bottom: 0.2em;
+}
+
 .train .main {
   display: flex;
 }
 
+.train .main span {
+  transform: scale(1, 1.3);
+}
+
 .train .main {
-  font-size: 18px;
+  font-size: 16px;
 }
 
 .train .main .advertised {
@@ -37,6 +46,10 @@ tr.headings td {
 
 .train .main .to {
   flex-grow: 8;
+}
+
+.train .main .estimated {
+  color: cyan;
 }
 
 .train .main .track {
@@ -50,12 +63,12 @@ tr.headings td {
 }
 
 .train .details {
-  font-size: 14px;
+  font-size: 12px;
   display: flex;
 }
 
 .train .details .id {
-  width: 21%;
+  width: 18%;
 }
 
 @media (max-width: 1440px) {
